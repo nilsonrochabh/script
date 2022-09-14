@@ -15,10 +15,12 @@ path=/srv/nextcloud/media/html/
 client_secret_m="S8Xgwx2NuONDpcqK5ciOlzKFTFoWCmFH"
 client_secret_stg="2DZF1guYs6HAEB5AlNSRnqxZpyr1DyT5"
 client_secret_prod="v9roi9fPFkt3xOLK9Yj1cYmO8RGQZOr6"
+client_secret_dev="TkVvuVSLRRA1bo99U3LYiXnBRxFYLRdd"
 client_id="admin-cli"
 realm="colmena"
 #keycloak="https://auth-stg.colmena.network"
-keycloak="https://auth-prod.colmena.network"
+#keycloak="https://auth-prod.colmena.network"
+keycloak="https://auth.colmena.network"
 #keycloak="https://auth.colmena.network"
 #keycloak="http://localhost:8080"
 
@@ -34,17 +36,24 @@ keycloak="https://auth-prod.colmena.network"
    access_token=$( curl -s --location --request POST "$keycloak/auth/realms/$realm/protocol/openid-connect/token" \
                   --header 'Content-Type: application/x-www-form-urlencoded' \
                   --data-urlencode 'client_id=admin-cli' \
-                  --data-urlencode "client_secret=$client_secret_prod" \
+                  --data-urlencode "client_secret=$client_secret_dev" \
                   --data-urlencode 'grant_type=client_credentials' | sed -n 's|.*"access_token":"\([^"]*\)".*|\1|p')
     
-    #echo "Access token : $access_token"
+    echo "Access token : $access_token"
+
+##################### test users in role Administrator #####################3
+usersAdm=$( curl -s --location --request GET "$keycloak/auth/admin/realms/colmena/clients/b32434b1-de76-4ccf-96e2-71ec39e12db3/roles/administrator/users?first=0&max=5" \
+          --header 'Content-Type: application/json' \
+           --header "Authorization: Bearer $access_token")
+echo $usersAdm 
+exit
 
 #########################list users###############################################
-  # listUsersk=$(curl -s --location --request GET "$keycloak/auth/admin/realms/colmena/users" \
-  #              --header 'Content-Type: application/json' \
-  #              --header "Authorization: Bearer $access_token" |jq -r '.[].id')
-  # #echo $listUsersk     
-  # ######################set role Administrator user #####################################
+#   listUsersk=$(curl -s --location --request GET "$keycloak/auth/admin/realms/colmena/users" \
+#                --header 'Content-Type: application/json' \
+#                --header "Authorization: Bearer $access_token" |jq -r '.[].id')
+#   #echo $listUsersk     
+#   ######################set role Administrator user #####################################
      
 #   clientId="c6a70eba-8747-47b4-be75-0705f06b51fb"    
 #   for userId in ${listUsersk[@]}; do
