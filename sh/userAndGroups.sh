@@ -15,12 +15,13 @@ path=/srv/nextcloud/media/html/
 client_secret_m="S8Xgwx2NuONDpcqK5ciOlzKFTFoWCmFH"
 client_secret_stg="2DZF1guYs6HAEB5AlNSRnqxZpyr1DyT5"
 client_secret_prod="v9roi9fPFkt3xOLK9Yj1cYmO8RGQZOr6"
-client_secret_dev="TkVvuVSLRRA1bo99U3LYiXnBRxFYLRdd"
+client_secret_dev="wsFlueZV1m2VgUi8dLpMI2lqXeLY2xxs"
 client_id="admin-cli"
 realm="colmena"
 #keycloak="https://auth-stg.colmena.network"
 #keycloak="https://auth-prod.colmena.network"
-keycloak="https://auth.colmena.network"
+#keycloak="https://auth.colmena.network"
+keycloak="https://a-prod.kolonyia.colmena.cc"
 #keycloak="https://auth.colmena.network"
 #keycloak="http://localhost:8080"
 
@@ -33,20 +34,20 @@ keycloak="https://auth.colmena.network"
 # access_token=$(sed -E -n 's/.*"access_token":"([^"]+)".*/\1/p' <<< $requestToken)
 # echo $access_token
 
-   access_token=$( curl -s --location --request POST "$keycloak/auth/realms/$realm/protocol/openid-connect/token" \
+   access_token=$( curl -s --location --request POST "$keycloak/realms/$realm/protocol/openid-connect/token" \
                   --header 'Content-Type: application/x-www-form-urlencoded' \
                   --data-urlencode 'client_id=admin-cli' \
                   --data-urlencode "client_secret=$client_secret_dev" \
                   --data-urlencode 'grant_type=client_credentials' | sed -n 's|.*"access_token":"\([^"]*\)".*|\1|p')
     
-    echo "Access token : $access_token"
+    #echo "Access token : $access_token"
 
 ##################### test users in role Administrator #####################3
-usersAdm=$( curl -s --location --request GET "$keycloak/auth/admin/realms/colmena/clients/b32434b1-de76-4ccf-96e2-71ec39e12db3/roles/administrator/users?first=0&max=5" \
-          --header 'Content-Type: application/json' \
-           --header "Authorization: Bearer $access_token")
-echo $usersAdm 
-exit
+# usersAdm=$( curl -s --location --request GET "$keycloak/auth/admin/realms/colmena/clients/b32434b1-de76-4ccf-96e2-71ec39e12db3/roles/administrator/users?first=0&max=5" \
+#           --header 'Content-Type: application/json' \
+#            --header "Authorization: Bearer $access_token")
+# echo $usersAdm 
+# exit
 
 #########################list users###############################################
 #   listUsersk=$(curl -s --location --request GET "$keycloak/auth/admin/realms/colmena/users" \
@@ -74,11 +75,11 @@ exit
 
 #        echo $userId
 #   done
-################update Groups Keycloak #######################
-# listGroupsk=$(curl -s --location --request GET "$keycloak/auth/admin/realms/$realm/groups?briefRepresentation=false" \
+# ################update Groups Keycloak #######################
+# listGroupsk=$(curl -s --location --request GET "$keycloak/admin/realms/$realm/groups?briefRepresentation=false" \
 # --header 'Content-Type: application/json' \
 # --header "Authorization: Bearer $access_token" | jq -r '.[].id')
-# #echo $listGroupsk
+#  echo $listGroupsk
 #  for groupsk in ${listGroupsk[@]};do
 #    updateG=$(curl --location --request PUT "$keycloak/admin/realms/colmena/groups/$groupsk" \
 #               --header 'Content-Type: application/json' \
@@ -133,30 +134,40 @@ exit
     # done
     # exit
 # ###############group NC and keyclaok ###################
-#   echo  -e " \033[0;34m Listando os Grupos \033[0m"
-#   listGroups=$(curl -s --location --request GET $nextcloudURL'/ocs/v1.php/cloud/groups?format=json' \
-#   --header 'OCS-APIRequest: true' \
-#   --header 'Authorization: Basic '$pwdclaudete'' | jq .ocs.data.groups[] )  
-#   echo $listGroups
+  echo  -e " \033[0;34m Listando os Grupos \033[0m"
+  listGroups=$(curl -s --location --request GET $nextcloudURL'/ocs/v1.php/cloud/groups?format=json' \
+  --header 'OCS-APIRequest: true' \
+  --header 'Authorization: Basic '$pwdclaudete'' | jq .ocs.data.groups[] )  
+  echo $listGroups
   
-#   for data in ${listGroups[@]}; do
-#       group=`echo $data | sed -e 's/\"//g'`
-#       echo $group
+  for data in ${listGroups[@]}; do
+      group=`echo $data | sed -e 's/\"//g'`
+      echo $group
 
-#       createGroup=$(curl --location --request POST "https://auth-prod.colmena.network/auth/admin/realms/colmena/groups" \
-#       --header "Authorization: Bearer $access_token" \
-#       --header 'Content-Type: application/json' \
-#       --data-raw '{
-#             "name": "'$group'",
-#             "path": "'/$group'",
-#             "subGroups": [],
-#             "attributes":{
-#                 "language":[""],
-#                 "licence":["GPL3"]
-#           }
-#         }')
-#       echo $createGroup   
-#   done 
+      createGroup=$(curl --location --request POST "$keycloak/admin/realms/$realm/groups" \
+      --header "Authorization: Bearer $access_token" \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+            "name": "'$group'",
+            "path": "'/$group'",
+            "subGroups": [],
+            "attributes":{
+                 "language": ["en"],
+                "logo": [""],
+                "slogan": [""],
+                "email": [""],
+                "audio_description_url": [""],
+                "social_media_facebook": [""],
+                "social_media_twitter": [""],
+                "social_media_instagram": [""],
+                "social_media_mastodon": [""],
+                "social_media_whatsapp": [""],
+                "social_media_telegram": [""],
+                "url": [""]
+          }
+        }')
+      echo $createGroup   
+  done 
 
 ###############users for gropus #####################
 #   echo  -e " \033[0;34m Listando os Grupos \033[0m"
@@ -180,58 +191,58 @@ exit
   #  for data in ${listGroups[@]}; do
   #    GG=`echo $data | sed -e 's/\"//g'`
   #    #echo $GG
-    echo  -e " \033[0;34m user for Grupos \033[0m"  
-    userGroups=$(curl -s --location --request GET "$nextcloudURL/ocs/v1.php/cloud/groups/devteam?format=json" \
-     --header 'OCS-APIRequest: true' \
-     --header "Authorization: Basic $pwdclaudete" | jq .ocs.data.users[] )
-     echo $userGroups   
-    # done 
-        for data in ${userGroups[@]}; do
-        user=`echo $data | sed -e 's/\"//g'` 
-        user_id=`cat usersColmenaMedia.json | jq --compact-output '."'$user'".user_id' | sed -e 's/\"//g'`
-        email=`cat usersColmenaMedia.json | jq --compact-output '."'$user'".email' | sed -e 's/\"//g'`
-        display_name=`cat usersColmenaMedia.json | jq --compact-output '."'$user'".display_name' | sed -e 's/\"//g'`
-        groups=`cat usersColmenaMedia.json | jq --compact-output '."'$user'".groups' | sed -e 's/\"//g' | sed -e 's/\[//g' | sed -e 's/\]//g'`
-        firstName=`echo $display_name | cut -d' ' -f1`
-        lastName=`echo $display_name | cut -d' ' -f2`
-       createuser=$(curl -s --location --request POST "https://auth-prod.colmena.network/auth/admin/realms/colmena/users" \
-             --header "Authorization: Bearer $access_token" \
-             --header 'Content-Type: application/json' \
-            --data-raw '{
-                 "enabled":true,
-                 "username":"'$user_id'",
-                 "email":"'$email'",
-                 "firstName":"'$firstName'",
-                 "lastName":"'$lastName'",
-                 "credentials":[
-                     {
-                         "type": "password",
-                         "value": "colmena@123",
-                         "temporary":false
-                     }
-                 ],
-                 "requiredActions":[
-                     "CONFIGURE_TOP",
-                     "VERIVY_EMAIL"
-                 ],
-                 "groups": ["'$groups'"],
-                 "attributes":{
-                     "region": [" "],
-                     "country": [""],
-                     "organization": [""],
-                     "language": [""],
-                    "phone": [""],
-                     "position": [""],
-                     "photo": ""
+#     echo  -e " \033[0;34m user for Grupos \033[0m"  
+#     userGroups=$(curl -s --location --request GET "$nextcloudURL/ocs/v1.php/cloud/groups/devteam?format=json" \
+#      --header 'OCS-APIRequest: true' \
+#      --header "Authorization: Basic $pwdclaudete" | jq .ocs.data.users[] )
+#      echo $userGroups   
+#     # done 
+#         for data in ${userGroups[@]}; do
+#         user=`echo $data | sed -e 's/\"//g'` 
+#         user_id=`cat usersColmenaMedia.json | jq --compact-output '."'$user'".user_id' | sed -e 's/\"//g'`
+#         email=`cat usersColmenaMedia.json | jq --compact-output '."'$user'".email' | sed -e 's/\"//g'`
+#         display_name=`cat usersColmenaMedia.json | jq --compact-output '."'$user'".display_name' | sed -e 's/\"//g'`
+#         groups=`cat usersColmenaMedia.json | jq --compact-output '."'$user'".groups' | sed -e 's/\"//g' | sed -e 's/\[//g' | sed -e 's/\]//g'`
+#         firstName=`echo $display_name | cut -d' ' -f1`
+#         lastName=`echo $display_name | cut -d' ' -f2`
+#        createuser=$(curl -s --location --request POST "https://auth-prod.colmena.network/auth/admin/realms/colmena/users" \
+#              --header "Authorization: Bearer $access_token" \
+#              --header 'Content-Type: application/json' \
+#             --data-raw '{
+#                  "enabled":true,
+#                  "username":"'$user_id'",
+#                  "email":"'$email'",
+#                  "firstName":"'$firstName'",
+#                  "lastName":"'$lastName'",
+#                  "credentials":[
+#                      {
+#                          "type": "password",
+#                          "value": "colmena@123",
+#                          "temporary":false
+#                      }
+#                  ],
+#                  "requiredActions":[
+#                      "CONFIGURE_TOP",
+#                      "VERIVY_EMAIL"
+#                  ],
+#                  "groups": ["'$groups'"],
+#                  "attributes":{
+#                      "region": [" "],
+#                      "country": [""],
+#                      "organization": [""],
+#                      "language": [""],
+#                     "phone": [""],
+#                      "position": [""],
+#                      "photo": ""
 
-                 }
-             }')
-       echo $createuser   
+#                  }
+#              }')
+#        echo $createuser   
 
-       done
-  #    done
-    exit
-  # for data in ${userGroups[@]}; do  
+#        done
+#   #    done
+#     exit
+#   # for data in ${userGroups[@]}; do  
        
 
 
