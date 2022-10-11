@@ -102,6 +102,16 @@ exit
 #                 }')
 #  echo $groupsk
 #  done
+
+
+##### Lista all username keycloak ##################333
+curl --location --request GET "$keycloak/auth/admin/realms/$realm/users/" \
+--header 'Content-Type: application/json' \
+--header "Authorization: Bearer $access_token' | jq -r '.[].username"
+
+
+
+
 ################update Password NC #######################
     # echo running on $nextcloudURL...
     # echo  -e " \033[0;34m Listando os users \033[0m"
