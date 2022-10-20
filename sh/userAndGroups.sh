@@ -5,17 +5,13 @@ verde="\033[0;32m"#parmera
 #nextcloudURL="http://localhost:8082"
 nextcloudURL="https://cloud.colmena.media"
 #nextcloudURL="https://claudete.colmena.network"
-pwdlocal="YWRtaW46MTIzNDU2"
-pwdclaudio="YWRtaW46MzU3N3VtVFVTRDJxdmIz"
-pwdclaudete="YWRtaW46dDdtazhzVTc5THlZMjlS"
+
+
 
 nc_app=nc-frontend_app_1
 file='/tmp/.profile.json'
 path=/srv/nextcloud/media/html/
-client_secret_m="S8Xgwx2NuONDpcqK5ciOlzKFTFoWCmFH"
-client_secret_stg="2DZF1guYs6HAEB5AlNSRnqxZpyr1DyT5"
-client_secret_prod="v9roi9fPFkt3xOLK9Yj1cYmO8RGQZOr6"
-client_secret_dev="TkVvuVSLRRA1bo99U3LYiXnBRxFYLRdd"
+
 client_id="admin-cli"
 realm="colmena"
 #keycloak="https://auth-stg.colmena.network"
